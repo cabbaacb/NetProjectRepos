@@ -944,6 +944,7 @@ GameObject:
   - component: {fileID: 2143884076}
   - component: {fileID: 2143884075}
   - component: {fileID: 2143884074}
+  - component: {fileID: 2143884077}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -965,29 +966,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
-  m_XRTrackingOrigin: {fileID: 0}
+  m_XRTrackingOrigin: {fileID: 963194228}
   m_ActionsAsset: {fileID: -944628639613478452, guid: d5f414b018ccf4f4694112a928f67ff6,
     type: 3}
-  m_PointAction: {fileID: 2371315837915836032, guid: d5f414b018ccf4f4694112a928f67ff6,
-    type: 3}
-  m_MoveAction: {fileID: 2371315837915836032, guid: d5f414b018ccf4f4694112a928f67ff6,
-    type: 3}
-  m_SubmitAction: {fileID: 2371315837915836032, guid: d5f414b018ccf4f4694112a928f67ff6,
-    type: 3}
-  m_CancelAction: {fileID: 2371315837915836032, guid: d5f414b018ccf4f4694112a928f67ff6,
-    type: 3}
-  m_LeftClickAction: {fileID: 2371315837915836032, guid: d5f414b018ccf4f4694112a928f67ff6,
-    type: 3}
-  m_MiddleClickAction: {fileID: 2371315837915836032, guid: d5f414b018ccf4f4694112a928f67ff6,
-    type: 3}
-  m_RightClickAction: {fileID: 2371315837915836032, guid: d5f414b018ccf4f4694112a928f67ff6,
-    type: 3}
-  m_ScrollWheelAction: {fileID: 2371315837915836032, guid: d5f414b018ccf4f4694112a928f67ff6,
-    type: 3}
-  m_TrackedDevicePositionAction: {fileID: 2371315837915836032, guid: d5f414b018ccf4f4694112a928f67ff6,
-    type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: 2371315837915836032, guid: d5f414b018ccf4f4694112a928f67ff6,
-    type: 3}
+  m_PointAction: {fileID: 0}
+  m_MoveAction: {fileID: 0}
+  m_SubmitAction: {fileID: 0}
+  m_CancelAction: {fileID: 0}
+  m_LeftClickAction: {fileID: 0}
+  m_MiddleClickAction: {fileID: 0}
+  m_RightClickAction: {fileID: 0}
+  m_ScrollWheelAction: {fileID: 0}
+  m_TrackedDevicePositionAction: {fileID: 0}
+  m_TrackedDeviceOrientationAction: {fileID: 0}
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
@@ -1020,3 +1011,40 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2143884077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2143884073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d984a4f5e0dbdb940a6ab388afa0e77f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _quit:
+    m_Name: Quit
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 212854e2-3065-49ed-b6cb-fc649d294093
+    m_Processors: 
+    m_Interactions: Hold
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: fb78b28c-5f13-48b2-960d-e83a0e3121ab
+      m_Path: <Keyboard>/escape
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Quit
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 7f08aad2-2652-4cd1-b30b-60e61091c7be
+      m_Path: <Keyboard>/q
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Quit
+      m_Flags: 0
+    m_Flags: 0
