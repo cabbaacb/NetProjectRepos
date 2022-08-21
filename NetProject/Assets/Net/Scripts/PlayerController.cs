@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 namespace Net
 {
@@ -17,6 +17,10 @@ namespace Net
         [SerializeField, Range(1f, 50f)] private float _health = 5f;
         [Space, SerializeField, Range(0.1f, 5f)] private float _attackDelay = 0.4f;
         [SerializeField, Range(0.1f, 1f)] private float _rotateDelay = 0.3f;
+
+        public delegate void DeathHandler();
+        public static event DeathHandler OnDeath;
+
 
         public float Health { get => _health; } 
 
@@ -74,6 +78,9 @@ namespace Net
 
         private void OnTriggerEnter(Collider other)
         {
+            if (other.GetComponent<Wall>() != null)
+                Death();
+
             var bullet = other.GetComponent<ProjectileController>();
 
             if (bullet == null) return;
@@ -82,7 +89,7 @@ namespace Net
             GetDamage(bullet.Damage);
             Destroy(other.gameObject);
 
-            if (_health <= 0) Debug.Log("YOU'RE DEAD");
+            if (_health <= 0) Death();
 
         }
 
@@ -114,7 +121,12 @@ namespace Net
             }
         }
 
+        private void Death()
+        {
+            OnDeath?.Invoke();
 
+            Time.timeScale = 0f;
+        }
         public void GetDamage(float damage) => _health -= damage;
     }
 }
