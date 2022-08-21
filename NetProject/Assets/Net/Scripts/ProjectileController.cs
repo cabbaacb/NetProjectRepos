@@ -12,13 +12,16 @@ namespace Net
         [SerializeField, Range(1f, 15f)] private float _lifetime = 7f;
 
 
+        
         private void OnEnable()
         {
             StartCoroutine(OnDie());
         }
 
 
-        public float GetDamage => _damage;
+        public float Damage => _damage;
+
+        public string Parent { get; set; }
 
         // Update is called once per frame
         void Update()
