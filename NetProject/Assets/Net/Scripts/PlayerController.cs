@@ -1,7 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Net
 {
@@ -93,10 +91,13 @@ namespace Net
 
         }
 
-        private void OnDestroy()
+        private void OnDisable()
         {
-            _controls.Player1.Disable();
-            _controls.Player2.Disable();
+
+            if (_player1)
+                _controls.Player1.Disable();
+            else
+                _controls.Player2.Disable();
         }
 
         private IEnumerator Fire()
