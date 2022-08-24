@@ -1,4 +1,5 @@
-﻿using Photon.Pun;
+﻿using ExitGames.Client.Photon;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -7,6 +8,9 @@ namespace Net.Managers
 {
     public class GameManager : MonoBehaviourPunCallbacks
     {
+        private PlayerController _player1;
+        private PlayerController _player2;
+
         [SerializeField] private string _playerPrefabName;
 
         [SerializeField]
@@ -22,6 +26,23 @@ namespace Net.Managers
 
             var pos = new Vector3(Random.Range(-_randomInterval, _randomInterval), 0f, Random.Range(-_randomInterval, _randomInterval));
             var GO = PhotonNetwork.Instantiate(_playerPrefabName + PhotonNetwork.NickName, new Vector3(), new Quaternion());
+
+            PhotonPeer.RegisterType(typeof(PlayerData), 100, Debugger.SerializePlayerData, Debugger.DeserializePlayerData);
+
+        }
+
+
+        public void AddPlayer(PlayerController player)
+        {
+            if (player.name.Contains("1"))
+                _player1 = player;
+            else _player2 = player;
+
+            if(_player1 != null && _player2 != null)
+            {
+                _player1.SetTarget(_player2.transform);
+                _player2.SetTarget(_player1.transform);
+            }
         }
 
         public override void OnLeftRoom()
@@ -44,10 +65,5 @@ namespace Net.Managers
 
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 }

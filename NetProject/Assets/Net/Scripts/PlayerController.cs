@@ -1,10 +1,11 @@
 ﻿using Photon.Pun;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Net
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IPunObservable
     {
         [SerializeField] private Transform _target;
         [SerializeField] private ProjectileController _bulletPrefab;
@@ -22,14 +23,19 @@ namespace Net
 
         public delegate void DeathHandler();
         public static event DeathHandler OnDeath;
+        public float Health { get => _health; }
+        public void SetHealth(float health) => _health = health;
 
 
-        public float Health { get => _health; } 
-
+        private List<ProjectileController> _bullets;
         private Controls _controls;
         private SpawnPoint _bulletspawnPoint;
 
         private float _maxSpeed = 3f;
+
+
+        public List<ProjectileController> GetBulletsPool() => _bullets;
+        public void SetBullets(List<ProjectileController> bull) => _bullets = bull;
 
         // Start is called before the first frame update
         void Start()
@@ -40,21 +46,47 @@ namespace Net
             _controls = new Controls();
             _firstPlayer = name.Contains("1");
 
+
+            _bulletspawnPoint = GetComponentInChildren<SpawnPoint>();
+
+            FindObjectOfType<Managers.GameManager>().AddPlayer(this);
+
+            /*
             if(_firstPlayer)
             _controls.Player1.Enable();
             else
             _controls.Player2.Enable();
 
-            _bulletspawnPoint = GetComponentInChildren<SpawnPoint>();
 
             StartCoroutine(Fire());
             StartCoroutine(Focus());
+            */
 
         }
 
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (!_photonView.IsMine) return;
+
+
+            var directionHor = _controls.Player1.Horizontal.ReadValue<float>();
+            var directionVer = _controls.Player1.Vertical.ReadValue<float>();
+
+            Vector2 direction = new Vector2(directionHor, directionVer);
+
+            if (direction.x == 0 && direction.y == 0) return;
+
+            var velocity = _rigidbody.velocity;
+
+            velocity += new Vector3(direction.y, 0f, direction.x) * _moveSpeed * Time.fixedDeltaTime;
+
+            velocity.y = 0f;
+            velocity = Vector3.ClampMagnitude(velocity, _maxSpeed);
+            _rigidbody.velocity = velocity;
+
+
+            /*
             var directionHor = _firstPlayer
                 ? _controls.Player1.Horizontal.ReadValue<float>()
 
@@ -75,7 +107,7 @@ namespace Net
             velocity.y = 0f;
             velocity = Vector3.ClampMagnitude(velocity, _maxSpeed);
             _rigidbody.velocity = velocity;
-
+            */
 
         }
 
@@ -100,10 +132,14 @@ namespace Net
         private void OnDisable()
         {
 
+            _controls.Player1.Disable();
+
+            /*
             if (_firstPlayer)
                 _controls.Player1.Disable();
             else
                 _controls.Player2.Disable();
+            */
         }
 
 
@@ -111,8 +147,9 @@ namespace Net
         {
             while(true)
             {
-                var bullet = Instantiate(_bulletPrefab, _bulletspawnPoint.transform.position, transform.rotation);
+                var bullet = Instantiate(_bulletPrefab, _bulletspawnPoint.transform.position, transform.rotation, transform);
                 bullet.Parent = name;
+                _bullets.Add(bullet);
                 yield return new WaitForSeconds(_attackDelay);
 
             }
@@ -129,6 +166,7 @@ namespace Net
             }
         }
 
+
         private void Death()
         {
             OnDeath?.Invoke();
@@ -136,5 +174,32 @@ namespace Net
             Time.timeScale = 0f;
         }
         public void GetDamage(float damage) => _health -= damage;
+
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if(stream.IsWriting)
+            {
+                stream.SendNext(PlayerData.Create(this));
+            }
+            else
+            {
+                ((PlayerData)stream.ReceiveNext()).Set(this);
+            }
+
+        }
+
+        public void SetTarget(Transform target)
+        {
+            _target = target;
+
+            if (!_photonView.IsMine) return;
+
+            _controls.Player1.Enable();
+            StartCoroutine(Fire());
+            StartCoroutine(Focus());
+
+
+        }
     }
 }
