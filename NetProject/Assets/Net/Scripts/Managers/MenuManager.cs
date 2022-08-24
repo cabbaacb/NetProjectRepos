@@ -31,9 +31,9 @@ namespace Net.Managers
         private void Start()
         {
 #if UNITY_EDITOR
-            PhotonNetwork.NickName = "playerNick1";
+            PhotonNetwork.NickName = "1";
 #elif UNITY_STANDALONE_WIN && !UNITY_EDITOR
-            PhotonNetwork.NickName = "playerNick2";
+            PhotonNetwork.NickName = "2";
 #endif
 
             PhotonNetwork.AutomaticallySyncScene = true;

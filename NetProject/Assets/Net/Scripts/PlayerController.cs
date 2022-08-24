@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Photon.Pun;
+using System.Collections;
 using UnityEngine;
 
 namespace Net
@@ -10,11 +11,14 @@ namespace Net
         [Space]
         [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private CapsuleCollider _collider;
-        [SerializeField] private bool _player1;
+
+        private bool _firstPlayer;
+
         [SerializeField, Range(1f, 10f)] private float _moveSpeed = 3f;
-        [SerializeField, Range(1f, 50f)] private float _health = 5f;
+        [SerializeField, Range(1f, 50f)] private float _health = 35f;
         [Space, SerializeField, Range(0.1f, 5f)] private float _attackDelay = 0.4f;
         [SerializeField, Range(0.1f, 1f)] private float _rotateDelay = 0.3f;
+        [SerializeField] private PhotonView _photonView;
 
         public delegate void DeathHandler();
         public static event DeathHandler OnDeath;
@@ -34,7 +38,9 @@ namespace Net
             _rigidbody = GetComponent<Rigidbody>();
 
             _controls = new Controls();
-            if(_player1)
+            _firstPlayer = name.Contains("1");
+
+            if(_firstPlayer)
             _controls.Player1.Enable();
             else
             _controls.Player2.Enable();
@@ -49,11 +55,11 @@ namespace Net
         // Update is called once per frame
         void FixedUpdate()
         {
-            var directionHor = _player1
+            var directionHor = _firstPlayer
                 ? _controls.Player1.Horizontal.ReadValue<float>()
 
                 : _controls.Player2.Horizontal.ReadValue<float>();
-            var directionVer = _player1
+            var directionVer = _firstPlayer
                 ? _controls.Player1.Vertical.ReadValue<float>()
 
                 : _controls.Player2.Vertical.ReadValue<float>();
@@ -94,11 +100,12 @@ namespace Net
         private void OnDisable()
         {
 
-            if (_player1)
+            if (_firstPlayer)
                 _controls.Player1.Disable();
             else
                 _controls.Player2.Disable();
         }
+
 
         private IEnumerator Fire()
         {
