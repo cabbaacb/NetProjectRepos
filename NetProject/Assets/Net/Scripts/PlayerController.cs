@@ -27,19 +27,31 @@ namespace Net
         public void SetHealth(float health) => _health = health;
 
 
-        private List<ProjectileController> _bullets;
+        private List<float[]> _bullets;
         private Controls _controls;
         private SpawnPoint _bulletspawnPoint;
 
         private float _maxSpeed = 3f;
 
 
-        public List<ProjectileController> GetBulletsPool() => _bullets;
-        public void SetBullets(List<ProjectileController> bull) => _bullets = bull;
+        public List<float[]> GetBulletsPool() => _bullets;
+        public void SetBullets(List<float[]> bull)
+        {
+            _bullets = bull;
+            //if (_photonView.IsMine) return;
+            foreach(var bul in bull)
+            {
+                Vector3 pos = new Vector3(bul[0], bul[1], bul[2]);
+                Instantiate(_bulletPrefab, pos, _target.rotation);
+            }
+            
+
+        }
 
         // Start is called before the first frame update
         void Start()
         {
+            _bullets = new List<float[]>();
             _collider = GetComponent<CapsuleCollider>();
             _rigidbody = GetComponent<Rigidbody>();
 
@@ -149,7 +161,7 @@ namespace Net
             {
                 var bullet = Instantiate(_bulletPrefab, _bulletspawnPoint.transform.position, transform.rotation, transform);
                 bullet.Parent = name;
-                _bullets.Add(bullet);
+                _bullets.Add(new float[]{ bullet.transform.position.x, bullet.transform.position.y, bullet.transform.position.z});
                 yield return new WaitForSeconds(_attackDelay);
 
             }

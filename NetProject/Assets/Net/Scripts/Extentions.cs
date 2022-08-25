@@ -42,19 +42,34 @@ namespace Net
             array.AddRange(BitConverter.GetBytes(player.rotY));
             array.AddRange(BitConverter.GetBytes(player.hp));
             foreach(var bul in player.bullets)
-                array.AddRange(BitConverter.GetBytes(bul));
+            {
+                var trans = BitConverter.GetBytes(bul[0]);
+                array.AddRange(trans);
+                trans = BitConverter.GetBytes(bul[1]);
+                array.AddRange(trans);
+                trans = BitConverter.GetBytes(bul[2]);
+                array.AddRange(trans);
+            }
 
             return array.ToArray();
         }
 
         public static object DeserializePlayerData(byte[] data)
         {
+            List<float[]> buls = new List<float[]>();
+
+            for (int i = 16; i < data.Length; i += 12)
+            {
+                buls.Add(new float[] {BitConverter.ToSingle(data, i), BitConverter.ToSingle(data, i+4),
+                    BitConverter.ToSingle(data, i+8)});
+            }
             return new PlayerData
             {
                 posX = BitConverter.ToSingle(data, 0),
                 posZ = BitConverter.ToSingle(data, 4),
                 rotY = BitConverter.ToSingle(data, 8),
-                hp = BitConverter.ToSingle(data, 12)
+                hp = BitConverter.ToSingle(data, 12),
+                bullets = buls
             };
         }
 
@@ -78,7 +93,7 @@ namespace Net
         public float posZ;
         public float rotY;
         public float hp;
-        public List<ProjectileController> bullets;
+        public List<float[]> bullets;
 
         public static PlayerData Create(PlayerController player)
         {
@@ -108,4 +123,5 @@ namespace Net
 
         }
     }
+
 }

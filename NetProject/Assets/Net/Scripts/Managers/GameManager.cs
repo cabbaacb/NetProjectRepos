@@ -25,7 +25,9 @@ namespace Net.Managers
             _quit.performed += OnQuit;
 
             var pos = new Vector3(Random.Range(-_randomInterval, _randomInterval), 0f, Random.Range(-_randomInterval, _randomInterval));
-            var GO = PhotonNetwork.Instantiate(_playerPrefabName + PhotonNetwork.NickName, new Vector3(), new Quaternion());
+            var GO = PhotonNetwork.Instantiate(_playerPrefabName + PhotonNetwork.NickName, pos, new Quaternion());
+
+
 
             PhotonPeer.RegisterType(typeof(PlayerData), 100, Debugger.SerializePlayerData, Debugger.DeserializePlayerData);
 
