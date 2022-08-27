@@ -132,10 +132,11 @@ MonoBehaviour:
   _rigidbody: {fileID: 2312327158238388609}
   _collider: {fileID: 2312327158238388621}
   _moveSpeed: 3
-  _health: 5
+  _health: 100
   _attackDelay: 0.4
   _rotateDelay: 0.3
   _photonView: {fileID: -1875120036589988221}
+  _bulletspawnPoint: {fileID: 0}
 --- !u!114 &-1875120036589988221
 MonoBehaviour:
   m_ObjectHideFlags: 0

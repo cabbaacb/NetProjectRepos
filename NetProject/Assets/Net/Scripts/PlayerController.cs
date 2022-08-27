@@ -16,7 +16,7 @@ namespace Net
         private bool _firstPlayer;
 
         [SerializeField, Range(1f, 10f)] private float _moveSpeed = 3f;
-        [SerializeField, Range(1f, 50f)] private float _health = 35f;
+        [SerializeField, Range(1f, 150f)] private float _health = 100f;
         [Space, SerializeField, Range(0.1f, 5f)] private float _attackDelay = 0.4f;
         [SerializeField, Range(0.1f, 1f)] private float _rotateDelay = 0.3f;
         [SerializeField] private PhotonView _photonView;
@@ -29,22 +29,25 @@ namespace Net
 
         private List<float[]> _bullets;
         private Controls _controls;
-        private SpawnPoint _bulletspawnPoint;
+        public SpawnPoint _bulletspawnPoint;
 
         private float _maxSpeed = 3f;
 
+        public delegate void BulletCreateHandler(Transform parent, string parentname);
+        public static event BulletCreateHandler OnBulletCreate;
 
         public List<float[]> GetBulletsPool() => _bullets;
         public void SetBullets(List<float[]> bull)
         {
             _bullets = bull;
-            //if (_photonView.IsMine) return;
+            /*if (_photonView.IsMine) return;
+
             foreach(var bul in bull)
             {
                 Vector3 pos = new Vector3(bul[0], bul[1], bul[2]);
                 Instantiate(_bulletPrefab, pos, _target.rotation);
             }
-            
+            */
 
         }
 
@@ -159,9 +162,17 @@ namespace Net
         {
             while(true)
             {
-                var bullet = Instantiate(_bulletPrefab, _bulletspawnPoint.transform.position, transform.rotation, transform);
-                bullet.Parent = name;
-                _bullets.Add(new float[]{ bullet.transform.position.x, bullet.transform.position.y, bullet.transform.position.z});
+                OnBulletCreate?.Invoke(transform, name);
+                /*
+                Quaternion rot;
+                if (_photonView.IsMine) rot = transform.rotation;
+                else rot = _target.transform.rotation;
+                var bullet = PhotonNetwork.Instantiate("Bullet", _bulletspawnPoint.transform.position, rot, 0);
+
+                //var bullet = Instantiate(_bulletPrefab, _bulletspawnPoint.transform.position, transform.rotation, transform);
+                bullet.GetComponent<ProjectileController>().Parent = name;
+                */
+                _bullets.Add(new float[]{ _bulletspawnPoint.transform.position.x, _bulletspawnPoint.transform.position.y, _bulletspawnPoint.transform.position.z});
                 yield return new WaitForSeconds(_attackDelay);
 
             }

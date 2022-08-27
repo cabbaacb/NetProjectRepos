@@ -23,6 +23,7 @@ namespace Net.Managers
         {
             _quit.Enable();
             _quit.performed += OnQuit;
+            PlayerController.OnBulletCreate += CreateBullet;
 
             var pos = new Vector3(Random.Range(-_randomInterval, _randomInterval), 0f, Random.Range(-_randomInterval, _randomInterval));
             var GO = PhotonNetwork.Instantiate(_playerPrefabName + PhotonNetwork.NickName, pos, new Quaternion());
@@ -31,6 +32,12 @@ namespace Net.Managers
 
             PhotonPeer.RegisterType(typeof(PlayerData), 100, Debugger.SerializePlayerData, Debugger.DeserializePlayerData);
 
+        }
+        public void CreateBullet(Transform parent, string parentName)
+        {
+            var bullet = PhotonNetwork.Instantiate("Bullet", parent.position, parent.rotation);
+
+            bullet.GetComponent<ProjectileController>().Parent = parentName;
         }
 
 
@@ -67,5 +74,10 @@ namespace Net.Managers
 
         }
 
+        private void OnDisable()
+        {
+
+            PlayerController.OnBulletCreate -= CreateBullet;
+        }
     }
 }
